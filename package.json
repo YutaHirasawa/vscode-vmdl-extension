@@ -1,0 +1,25 @@
+{
+    "name": "vmdl-language",
+    "displayName": "vmdl-language",
+    "description": "Syntax highlight for VMDL",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.50.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "vmdl",
+            "aliases": ["VMDL", "vmdl"],
+            "extensions": [".vmd"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "vmdl",
+            "scopeName": "source.vmdl",
+            "path": "./syntaxes/vmdl.tmLanguage.json"
+        }]
+    }
+}
