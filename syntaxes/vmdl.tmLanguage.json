@@ -3,17 +3,47 @@
 	"name": "VMDL",
 	"patterns": [
 		{
-			"include": "#keywords"
+			"include": "#comments"
 		},
 		{
-			"include": "#strings"
+			"include": "#pattern_definitions"
+		},
+		{
+			"include": "#externc_constants"
+		},
+		{
+			"include": "#externc_mappings"
+		},
+		{
+			"include": "#externc_functions"
+		},
+		{
+			"include": "#function_metas"
+		},
+		{
+			"include": "#function_definitions"
+		},
+		{
+			"match" : "^\\s*(#include)\\b\\s*(.+)\\n",
+			"captures": {
+				"1" : {
+					"name" : "keyword.control.vmdl"
+				},
+				"2" : {
+					"patterns" : [{"include" : "#strings"}]
+				}
+			}
 		}
 	],
 	"repository": {
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.vmdl",
-				"match": "\\b(if|while|for|return)\\b"
+				"match": "\\b(if|else|do|to|step|while|return|match|rematch|case|type|pattern|externC|constant|mapping|embedded)\\b"
+			},
+			{
+				"name": "keyword.other.vmdl",
+				"match": "\\b(true|false)\\b"
 			}]
 		},
 		"strings": {
@@ -26,6 +56,411 @@
 					"match": "\\\\."
 				}
 			]
+		},
+		"annotations": {
+			"patterns": [{
+				"name": "keyword.other.vmdl",
+				"match": "\\b(vmInstruction|needContext|triggerGC|tailCall|noIncPC|makeInline)\\b"
+			}]
+		},
+		"comments": {
+			"patterns": [{
+				"name": "comment.line.double-slash.vmdl",
+				"match": "\\/\\/.*\\n"
+			},{
+				"name": "comment.block.vmdl",
+				"begin": "\\/\\*",
+				"end": "\\*\\/"
+			}
+			]
+		},
+		"variable_names": {
+			"name": "variable.other.vmdl",
+			"match": "[\\w&&[^0-9]]+\\w*"
+		},
+		"function_names": {
+			"name": "entity.name.function.vmdl",
+			"match": "[\\w&&[^0-9]]+\\w*"
+		},
+		"numbers": {
+			"patterns": [{
+				"name": "constant.numeric.vmdl",
+				"match": "\\b(([0-9]*\\.[0-9]+)|[0-9]+)([eE][\\+\\-]?[0-9]+)?\\b"
+			}]
+		},
+		"native_types": {
+			"patterns": [{
+				"name": "entity.name.type.vmdl",
+				"match": "\\b(Top|void|cint|cdouble|cstring|Displacement|Subscript|HeapObject|JSValue|Number|Bool|JSObject|String|Fixnum|Flonum|Special|SimpleObject|Array|Function|Builtin|Iterator|Regexp|StringObject|NumberObject|BooleanObject)\\b"
+			}]
+		},
+		"types": {
+			"patterns": [
+				{
+					"include": "#native_types"
+				},
+				{
+					"name": "entity.name.type.vmdl",
+					"match": "\\b[\\w&&[^0-9]]+\\w*\\b"
+				}
+			]
+		},
+		"pattern_definitions": {
+			"match": "^\\s*(pattern)\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)",
+			"captures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#types"}]},
+				"3": {"patterns": [{"include": "#variable_names"}]},
+				"4": {"patterns": [{"include": "#type_conditions"}]}
+			}
+		},
+		"externc_constants": {
+			"match": "^\\s*(externC)\\s+(constant)\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+);",
+			"captures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#keywords"}]},
+				"3": {"patterns": [{"include": "#types"}]},
+				"4": {"patterns": [{"include": "#variable_names"}]},
+				"5": {"patterns": [{"include": "#strings"}]}
+			}
+		},
+		"externc_mappings": {
+			"begin": "^\\s*(externC)\\s+(mapping)\\s+([\\w&&[^0-9]]+\\w*)\\s*(?={)",
+			"end": "(?<=})",
+			"beginCaptures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#keywords"}]},
+				"3": {"patterns": [{"include": "#types"}]},
+				"5": {"patterns": [{"include": "#strings"}]}
+			},
+			"patterns": [{"include": "#externc_mapping_objects"}]
+		},
+		"externc_mapping_objects": {
+			"match": "^\\s*(embedded)?\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*;",
+			"captures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#types"}]},
+				"3": {"patterns": [{"include": "#variable_names"}]}
+			}
+		},
+		"externc_functions": {
+			"match": "^\\s*(externC)\\s+(\\((.+)\\))?\\s*([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+			"captures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#annotations"}]},
+				"4": {"patterns": [{"include": "#function_names"}]},
+				"5": {"patterns": [{"include": "#types"}]}
+			}
+		},
+		"function_metas": {
+			"patterns": [
+				{
+					"match": "^\\s*(\\((.+)\\))?\\s*([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+					"captures": {
+						"1": {"patterns": [{"include": "#annotations"}]},
+						"3": {"patterns": [{"include": "#function_names"}]},
+						"4": {"patterns": [{"include": "#types"}]}
+					}
+				},
+				{
+					"begin": "^\\s*(\\(.+\\))",
+					"end": "([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+					"beginCaptures": {
+						"1": {"patterns": [{"include": "#annotations"}]}
+					},
+					"endCaptures": {
+						"1": {"patterns": [{"include": "#function_names"}]},
+						"2": {"patterns": [{"include": "#types"}]}
+					}
+				}
+			]
+		},
+		"function_definitions": {
+			"patterns": [{
+				"begin": "^\\s*(.+)\\s*\\((.+)\\)\\s*(?={)",
+				"end": "(?<=})",
+				"beginCaptures": {
+					"1": {"patterns": [{"include": "#function_names"}]},
+					"2": {"patterns": [{"include": "#variable_names"}]}
+				},
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#blocks"
+					}
+				]
+			}]
+		},
+		"statements":{
+			"patterns": [
+				{
+					"include": "#blocks"
+				},
+				{
+					"include": "#do_statements"
+				},
+				{
+					"include": "#matchies"
+				},
+				{
+					"include": "#if_statements"
+				},
+				{
+					"include": "#returns"
+				},
+				{
+					"include": "#declarations"
+				},
+				{
+					"include": "#assignments"
+				},
+				{
+					"include": "#expression_statements"
+				}
+			]
+		},
+		"blocks": {
+			"patterns": [{
+				"begin": "{",
+				"end": "}",
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#statements"
+					}
+				]
+			}]
+		},
+		"match_blocks": {
+			"patterns": [{
+				"begin": "{",
+				"end": "}",
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#cases"
+					},
+					{
+						"include": "#statements"
+					}
+				]
+			}]
+		},
+		"matchies": {
+			"patterns": [{
+				"begin": "^\\s*([\\w&&[^0-9]]+\\w*:)?\\s*(match)\\s*\\((.+)\\)\\s*(?={)",
+				"end": "(?<=})",
+				"beginCaptures": {
+					"2": {"patterns": [{"include": "#keywords"}]},
+					"3": {"patterns": [{"include": "#variable_names"}]}
+				},
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#match_blocks"
+					}
+				]
+			}]
+		},
+		"cases": {
+			"patterns": [{
+				"begin": "^\\s*(case)\\s*\\(\\s*(.+)\\s*\\)\\s*(?={)",
+				"end": "(?<=})",
+				"beginCaptures": {
+					"1": {"patterns": [{"include": "#keywords"}]},
+					"2": {"patterns": [{"include": "#type_conditions"}]}
+				},
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#blocks"
+					}
+				]
+			}]
+		},
+		"type_conditions": {
+			"patterns": [
+				{
+					"match": "\\b(true)\\b",
+					"captures": {
+						"1": {"patterns": [{"include": "#keywords"}]}
+					}
+				},
+				{
+					"match": "\\s*(\\|\\||\\&\\&)\\s*"
+				},
+				{
+					"match": "(\\S+)\\s+([\\w&&[^0-9]]+\\w*)",
+					"captures": {
+						"1": {"patterns": [{"include": "#types"}]},
+						"2": {"patterns": [{"include": "#variable_names"}]}
+					}
+				}
+			]
+		},
+		"if_statements": {
+			"patterns": [
+				{
+				"begin": "^\\s*(if)\\s*\\(\\s*(.+)\\s*\\)\\s*(?={)",
+				"end": "(?<=})",
+				"beginCaptures": {
+					"1": {"patterns": [{"include": "#keywords"}]},
+					"2": {"patterns": [{"include": "#expressions"}]}
+				},
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#blocks"
+					}
+				]
+				},
+				{
+					"match": "^\\s*(if)\\s*\\(\\s*(.+)\\s*\\)",
+					"captures": {
+						"1": {"patterns": [{"include": "#keywords"}]},
+						"2": {"patterns": [{"include": "#expressions"}]}
+					}
+				}
+			]
+		},
+		"do_statements": {
+			"patterns": [
+				{
+					"begin": "^\\s*(do)\\s*\\(\\s*(.+)\\s*\\)\\s*(?={)",
+					"end": "(?<=})",
+					"beginCaptures": {
+						"1": {"patterns": [{"include": "#keywords"}]},
+						"2": {"patterns": [{"include": "#do_conditions"}]}
+					},
+					"patterns":[
+						{
+							"include": "#blocks"
+						}
+					]
+				},
+				{
+					"match": "^\\s*(do)\\s*\\(\\s*(.+)\\s*\\)",
+					"captures": {
+						"1": {"patterns": [{"include": "#keywords"}]},
+						"2": {"patterns": [{"include": "#do_conditions"}]}
+					}
+				}
+			]
+		},
+		"do_conditions": {
+			"patterns": [{
+				"match": "(\\S+)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)\\b(to)\\b(.+)\\b(step)\\b(.+)",
+				"captures": {
+					"1": {"patterns": [{"include": "#types"}]},
+					"2": {"patterns": [{"include": "#variable_names"}]},
+					"3": {"patterns": [{"include": "#expressions"}]},
+					"4": {"patterns": [{"include": "#keywords"}]},
+					"5": {"patterns": [{"include": "#expressions"}]},
+					"6": {"patterns": [{"include": "#keywords"}]},
+					"7": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
+		"returns":{
+			"patterns": [{
+				"match": "^\\s*(return)\\s*(.+);",
+				"captures": {
+					"1": {"patterns": [{"include": "#keywords"}]},
+					"2": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
+		"assignments": {
+			"patterns": [{
+				"match": "^\\s*(.+)\\s*\\<\\-\\s*(.+);",
+				"captures": {
+					"1": {"patterns": [{"include": "#variable_names"}]},
+					"2": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
+		"declarations": {
+			"patterns": [{
+				"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+);",
+				"captures": {
+					"1": {"patterns": [{"include": "#types"}]},
+					"2": {"patterns": [{"include": "#variable_names"}]},
+					"3": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
+		"expression_statements":{
+			"patterns": [{
+				"match": "^\\s*(.+);",
+				"captures": {
+					"1": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
+		"expressions": {
+			"patterns": [
+				{
+					"include": "#function_calls"
+				},
+				{
+					"include": "#array_index"
+				},
+				{
+					"include": "#field_access"
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"include": "#numbers"
+				},
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#variable_names"
+				},
+				{
+					"begin": "\\(",
+					"end": "\\)",
+					"patterns": [{
+						"include": "#expressions"
+					}]
+				}
+			]
+		},
+		"function_calls": {
+			"match": "(.+)\\s*\\(\\s*(.*)\\s*\\)",
+			"captures": {
+				"1": {"patterns": [{"include": "#function_names"}]},
+				"2": {"patterns": [{"include": "#expressions"}]}
+			}
+		},
+		"array_index": {
+			"match": "(.+)\\s*\\[\\s*(.*)\\s*\\]",
+			"captures": {
+				"1": {"patterns": [{"include": "#variable_names"}]},
+				"2": {"patterns": [{"include": "#expressions"}]}
+			}
+		},
+		"field_access": {
+			"match": "(.+)\\s*\\.\\s*(.*)\\s*",
+			"captures": {
+				"1": {"patterns": [{"include": "#variable_names"}]},
+				"2": {"patterns": [{"include": "#expressions"}]}
+			}
 		}
 	},
 	"scopeName": "source.vmdl"
