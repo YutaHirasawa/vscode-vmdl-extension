@@ -445,21 +445,21 @@
 			]
 		},
 		"function_calls": {
-			"match": "(.+)\\s*\\(\\s*(.*)\\s*\\)",
+			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\(\\s*(.*)\\s*\\)",
 			"captures": {
 				"1": {"patterns": [{"include": "#function_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
 			}
 		},
 		"array_index": {
-			"match": "(.+)\\s*\\[\\s*(.*)\\s*\\]",
+			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\[\\s*(.*)\\s*\\]",
 			"captures": {
 				"1": {"patterns": [{"include": "#variable_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
 			}
 		},
 		"field_access": {
-			"match": "(.+)\\s*\\.\\s*(.*)\\s*",
+			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\.\\s*(.*)\\s*",
 			"captures": {
 				"1": {"patterns": [{"include": "#variable_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
