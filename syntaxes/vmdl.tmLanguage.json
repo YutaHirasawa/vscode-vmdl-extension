@@ -227,6 +227,9 @@
 				"end": "}",
 				"patterns":[
 					{
+						"include": "#comments"
+					},
+					{
 						"include": "#keywords"
 					},
 					{
