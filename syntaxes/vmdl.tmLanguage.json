@@ -395,14 +395,23 @@
 			}]
 		},
 		"declarations": {
-			"patterns": [{
-				"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+);",
-				"captures": {
-					"1": {"patterns": [{"include": "#types"}]},
-					"2": {"patterns": [{"include": "#variable_names"}]},
-					"3": {"patterns": [{"include": "#expressions"}]}
+			"patterns": [
+				{
+					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+);",
+					"captures": {
+						"1": {"patterns": [{"include": "#types"}]},
+						"2": {"patterns": [{"include": "#variable_names"}]},
+						"3": {"patterns": [{"include": "#expressions"}]}
+					}
+				},
+				{
+					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*;",
+					"captures": {
+						"1": {"patterns": [{"include": "#types"}]},
+						"2": {"patterns": [{"include": "#variable_names"}]}
+					}
 				}
-			}]
+			]
 		},
 		"expression_statements":{
 			"patterns": [{
