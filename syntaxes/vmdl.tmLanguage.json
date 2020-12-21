@@ -18,6 +18,9 @@
 			"include": "#externc_functions"
 		},
 		{
+			"include": "#externc_variables"
+		},
+		{
 			"include": "#function_metas"
 		},
 		{
@@ -39,7 +42,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.vmdl",
-				"match": "\\b(if|else|do|to|step|while|return|match|rematch|case|type|pattern|externC|constant|mapping|embedded)\\b"
+				"match": "\\b(if|else|do|to|step|while|return|match|rematch|case|type|pattern|externC|constant|mapping|embedded|function|variable)\\b"
 			},
 			{
 				"name": "keyword.other.vmdl",
@@ -60,7 +63,7 @@
 		"annotations": {
 			"patterns": [{
 				"name": "keyword.other.vmdl",
-				"match": "\\b(vmInstruction|needContext|triggerGC|tailCall|noIncPC|makeInline)\\b"
+				"match": "\\b(vmInstruction|needContext|triggerGC|tailCall|noIncPC|makeInline|builtinFunction)\\b"
 			}]
 		},
 		"comments": {
@@ -115,23 +118,24 @@
 			}
 		},
 		"externc_constants": {
-			"match": "^\\s*(externC)\\s+(constant)\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+);",
+			"match": "^\\s*(externC)\\s+(constant)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)\\s*:\\s*([\\w&&[^0-9]]+\\w*)",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#keywords"}]},
-				"3": {"patterns": [{"include": "#types"}]},
-				"4": {"patterns": [{"include": "#variable_names"}]},
-				"5": {"patterns": [{"include": "#strings"}]}
+				"3": {"patterns": [{"include": "#variable_names"}]},
+				"4": {"patterns": [{"include": "#strings"}]},
+				"5": {"patterns": [{"include": "#types"}]}
 			}
 		},
 		"externc_mappings": {
-			"begin": "^\\s*(externC)\\s+(mapping)\\s+([\\w&&[^0-9]]+\\w*)\\s*(?={)",
-			"end": "(?<=})",
+			"begin": "^\\s*(externC)\\s+(mapping)\\s*(?={)",
+			"end": "}\\s*:\\s*([\\w&&[^0-9]]+\\w*)",
 			"beginCaptures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
-				"2": {"patterns": [{"include": "#keywords"}]},
-				"3": {"patterns": [{"include": "#types"}]},
-				"5": {"patterns": [{"include": "#strings"}]}
+				"2": {"patterns": [{"include": "#keywords"}]}
+			},
+			"endCaptures": {
+				"1": {"patterns": [{"include": "#types"}]}
 			},
 			"patterns": [{"include": "#externc_mapping_objects"}]
 		},
@@ -144,12 +148,22 @@
 			}
 		},
 		"externc_functions": {
-			"match": "^\\s*(externC)\\s+(\\((.+)\\))?\\s*([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+			"match": "^\\s*(externC)\\s+(\\((.+)?\\))?\\s*(function\\s+)?([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#annotations"}]},
-				"4": {"patterns": [{"include": "#function_names"}]},
-				"5": {"patterns": [{"include": "#types"}]}
+				"4": {"patterns": [{"include": "#keywords"}]},
+				"5": {"patterns": [{"include": "#function_names"}]},
+				"6": {"patterns": [{"include": "#types"}]}
+			}
+		},
+		"externc_variables": {
+			"match": "^\\s*(externC)\\s+(variable)\\s+([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+			"captures": {
+				"1": {"patterns": [{"include": "#keywords"}]},
+				"2": {"patterns": [{"include": "#keywords"}]},
+				"3": {"patterns": [{"include": "#variable_names"}]},
+				"4": {"patterns": [{"include": "#types"}]}
 			}
 		},
 		"function_metas": {
@@ -208,13 +222,16 @@
 					"include": "#if_statements"
 				},
 				{
+					"include": "#while_statements"
+				},
+				{
 					"include": "#returns"
 				},
 				{
-					"include": "#declarations"
+					"include": "#assignments"
 				},
 				{
-					"include": "#assignments"
+					"include": "#declarations"
 				},
 				{
 					"include": "#expression_statements"
@@ -315,6 +332,33 @@
 			"patterns": [
 				{
 				"begin": "^\\s*(if)\\s*\\(\\s*(.+)\\s*\\)\\s*(?={)",
+				"end": "(?<=})",
+				"beginCaptures": {
+					"1": {"patterns": [{"include": "#keywords"}]},
+					"2": {"patterns": [{"include": "#expressions"}]}
+				},
+				"patterns":[
+					{
+						"include": "#keywords"
+					},
+					{
+						"include": "#blocks"
+					}
+				]
+				},
+				{
+					"match": "^\\s*(if)\\s*\\(\\s*(.+)\\s*\\)",
+					"captures": {
+						"1": {"patterns": [{"include": "#keywords"}]},
+						"2": {"patterns": [{"include": "#expressions"}]}
+					}
+				}
+			]
+		},
+		"while_statements": {
+			"patterns": [
+				{
+				"begin": "^\\s*(while)\\s*\\(\\s*(.+)\\s*\\)\\s*(?={)",
 				"end": "(?<=})",
 				"beginCaptures": {
 					"1": {"patterns": [{"include": "#keywords"}]},
