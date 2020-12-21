@@ -422,7 +422,7 @@
 		},
 		"returns":{
 			"patterns": [{
-				"match": "^\\s*(return)\\s*(.+);",
+				"match": "^\\s*(return)\\s*(.+?);",
 				"captures": {
 					"1": {"patterns": [{"include": "#keywords"}]},
 					"2": {"patterns": [{"include": "#expressions"}]}
@@ -431,7 +431,7 @@
 		},
 		"assignments": {
 			"patterns": [{
-				"match": "^\\s*(.+)\\s*\\<\\-\\s*(.+);",
+				"match": "^\\s*(.+)\\s*\\<\\-\\s*(.+?);",
 				"captures": {
 					"1": {"patterns": [{"include": "#variable_names"}]},
 					"2": {"patterns": [{"include": "#expressions"}]}
@@ -441,7 +441,7 @@
 		"declarations": {
 			"patterns": [
 				{
-					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+);",
+					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+?);",
 					"captures": {
 						"1": {"patterns": [{"include": "#types"}]},
 						"2": {"patterns": [{"include": "#variable_names"}]},
@@ -449,7 +449,7 @@
 					}
 				},
 				{
-					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*;",
+					"match": "^\\s*([a-zA-Z]+)\\s*(.+?)\\s*;",
 					"captures": {
 						"1": {"patterns": [{"include": "#types"}]},
 						"2": {"patterns": [{"include": "#variable_names"}]}
@@ -459,7 +459,7 @@
 		},
 		"expression_statements":{
 			"patterns": [{
-				"match": "^\\s*(.+);",
+				"match": "^\\s*(.+?);",
 				"captures": {
 					"1": {"patterns": [{"include": "#expressions"}]}
 				}
