@@ -67,23 +67,25 @@
 			}]
 		},
 		"comments": {
-			"patterns": [{
+			"patterns": [
+				{
 				"name": "comment.line.double-slash.vmdl",
-				"match": "\\/\\/.*\\n"
-			},{
+				"match": "\\s*\\/\\/.*\\n"
+				},
+				{
 				"name": "comment.block.vmdl",
 				"begin": "\\/\\*",
 				"end": "\\*\\/"
-			}
+				}
 			]
 		},
 		"variable_names": {
 			"name": "variable.other.vmdl",
-			"match": "[\\w&&[^0-9]]+\\w*"
+			"match": "[\\w&&[^0-9]]\\w*"
 		},
 		"function_names": {
 			"name": "entity.name.function.vmdl",
-			"match": "[\\w&&[^0-9]]+\\w*"
+			"match": "[\\w&&[^0-9]]\\w*"
 		},
 		"numbers": {
 			"patterns": [{
@@ -104,12 +106,12 @@
 				},
 				{
 					"name": "entity.name.type.vmdl",
-					"match": "\\b[\\w&&[^0-9]]+\\w*\\b"
+					"match": "\\b[\\w&&[^0-9]]\\w*\\b"
 				}
 			]
 		},
 		"pattern_definitions": {
-			"match": "^\\s*(pattern)\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)",
+			"match": "^\\s*(pattern)\\s+([\\w&&[^0-9]]\\w*)\\s+([\\w&&[^0-9]]\\w*)\\s*\\=\\s*(.+)",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#types"}]},
@@ -118,7 +120,7 @@
 			}
 		},
 		"externc_constants": {
-			"match": "^\\s*(externC)\\s+(constant)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)\\s*:\\s*([\\w&&[^0-9]]+\\w*)",
+			"match": "^\\s*(externC)\\s+(constant)\\s+([\\w&&[^0-9]]\\w*)\\s*\\=\\s*(.+)\\s*:\\s*([\\w&&[^0-9]]\\w*)(\\[\\])?",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#keywords"}]},
@@ -129,7 +131,7 @@
 		},
 		"externc_mappings": {
 			"begin": "^\\s*(externC)\\s+(mapping)\\s*(?={)",
-			"end": "}\\s*:\\s*([\\w&&[^0-9]]+\\w*)",
+			"end": "}\\s*:\\s*([\\w&&[^0-9]]\\w*)",
 			"beginCaptures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#keywords"}]}
@@ -140,7 +142,7 @@
 			"patterns": [{"include": "#externc_mapping_objects"}]
 		},
 		"externc_mapping_objects": {
-			"match": "^\\s*(embedded)?\\s+([\\w&&[^0-9]]+\\w*)\\s+([\\w&&[^0-9]]+\\w*)\\s*;",
+			"match": "^\\s*(embedded)?\\s+([\\w&&[^0-9]]\\w*)\\s+([\\w&&[^0-9]]\\w*)\\s*;",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#types"}]},
@@ -148,7 +150,7 @@
 			}
 		},
 		"externc_functions": {
-			"match": "^\\s*(externC)\\s+(\\((.+)?\\))?\\s*(function\\s+)?([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+			"match": "^\\s*(externC)\\s+(\\((.+)?\\))?\\s*(function\\s+)?([\\w&&[^0-9]]\\w*)\\s*:\\s*(.+)",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#annotations"}]},
@@ -158,7 +160,7 @@
 			}
 		},
 		"externc_variables": {
-			"match": "^\\s*(externC)\\s+(variable)\\s+([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+			"match": "^\\s*(externC)\\s+(variable)\\s+([\\w&&[^0-9]]\\w*)\\s*:\\s*(.+)",
 			"captures": {
 				"1": {"patterns": [{"include": "#keywords"}]},
 				"2": {"patterns": [{"include": "#keywords"}]},
@@ -169,7 +171,7 @@
 		"function_metas": {
 			"patterns": [
 				{
-					"match": "^\\s*(\\((.+)\\))?\\s*([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+					"match": "^\\s*(\\((.+)\\))?\\s*([\\w&&[^0-9]]\\w*)\\s*:\\s*(.+)",
 					"captures": {
 						"1": {"patterns": [{"include": "#annotations"}]},
 						"3": {"patterns": [{"include": "#function_names"}]},
@@ -178,7 +180,7 @@
 				},
 				{
 					"begin": "^\\s*(\\(.+\\))",
-					"end": "([\\w&&[^0-9]]+\\w*)\\s*:\\s*(.+)",
+					"end": "([\\w&&[^0-9]]\\w*)\\s*:\\s*(.+)",
 					"beginCaptures": {
 						"1": {"patterns": [{"include": "#annotations"}]}
 					},
@@ -191,16 +193,13 @@
 		},
 		"function_definitions": {
 			"patterns": [{
-				"begin": "^\\s*(.+)\\s*\\((.+)\\)\\s*(?={)",
+				"begin": "^\\s*(.+)\\s*\\((.*)\\)\\s*(?={)",
 				"end": "(?<=})",
 				"beginCaptures": {
 					"1": {"patterns": [{"include": "#function_names"}]},
 					"2": {"patterns": [{"include": "#variable_names"}]}
 				},
 				"patterns":[
-					{
-						"include": "#keywords"
-					},
 					{
 						"include": "#blocks"
 					}
@@ -226,6 +225,9 @@
 				},
 				{
 					"include": "#returns"
+				},
+				{
+					"include": "#rematchs"
 				},
 				{
 					"include": "#assignments"
@@ -274,7 +276,7 @@
 		},
 		"matchies": {
 			"patterns": [{
-				"begin": "^\\s*([\\w&&[^0-9]]+\\w*:)?\\s*(match)\\s*\\((.+)\\)\\s*(?={)",
+				"begin": "^\\s*([\\w&&[^0-9]]\\w*:)?\\s*(match)\\s*\\((.+)\\)\\s*(?={)",
 				"end": "(?<=})",
 				"beginCaptures": {
 					"2": {"patterns": [{"include": "#keywords"}]},
@@ -320,7 +322,7 @@
 					"match": "\\s*(\\|\\||\\&\\&)\\s*"
 				},
 				{
-					"match": "(\\S+)\\s+([\\w&&[^0-9]]+\\w*)",
+					"match": "(\\S+)\\s+([\\w&&[^0-9]]\\w*)",
 					"captures": {
 						"1": {"patterns": [{"include": "#types"}]},
 						"2": {"patterns": [{"include": "#variable_names"}]}
@@ -408,7 +410,7 @@
 		},
 		"do_conditions": {
 			"patterns": [{
-				"match": "(\\S+)\\s+([\\w&&[^0-9]]+\\w*)\\s*\\=\\s*(.+)\\b(to)\\b(.+)\\b(step)\\b(.+)",
+				"match": "(\\S+)\\s+([\\w&&[^0-9]]\\w*)\\s*\\=\\s*(.+)\\b(to)\\b(.+)\\b(step)\\b(.+)",
 				"captures": {
 					"1": {"patterns": [{"include": "#types"}]},
 					"2": {"patterns": [{"include": "#variable_names"}]},
@@ -429,6 +431,15 @@
 				}
 			}]
 		},
+		"rematchs":{
+			"patterns": [{
+				"match": "^\\s*(rematch)\\s*(.+?);",
+				"captures": {
+					"1": {"patterns": [{"include": "#keywords"}]},
+					"2": {"patterns": [{"include": "#expressions"}]}
+				}
+			}]
+		},
 		"assignments": {
 			"patterns": [{
 				"match": "^\\s*(.+)\\s*\\<\\-\\s*(.+?);",
@@ -441,25 +452,26 @@
 		"declarations": {
 			"patterns": [
 				{
-					"match": "^\\s*([a-zA-Z]+)\\s*(.+)\\s*\\=\\s*(.+?);",
+					"match": "^\\s*([\\w&&[^0-9]]\\w*)(\\[\\])?\\s+([\\w&&[^0-9]]\\w*)\\s*\\=\\s*(.+?);",
 					"captures": {
 						"1": {"patterns": [{"include": "#types"}]},
-						"2": {"patterns": [{"include": "#variable_names"}]},
-						"3": {"patterns": [{"include": "#expressions"}]}
+						"3": {"patterns": [{"include": "#variable_names"}]},
+						"4": {"patterns": [{"include": "#expressions"}]}
 					}
 				},
 				{
-					"match": "^\\s*([a-zA-Z]+)\\s*(.+?)\\s*;",
+					"match": "^\\s*([\\w&&[^0-9]]\\w*)(\\[\\])?\\s+([\\w&&[^0-9]]\\w*)\\s*;",
+					"name": "constant.numeric.vmdl",
 					"captures": {
 						"1": {"patterns": [{"include": "#types"}]},
-						"2": {"patterns": [{"include": "#variable_names"}]}
+						"3": {"patterns": [{"include": "#variable_names"}]}
 					}
 				}
 			]
 		},
-		"expression_statements":{
+		"expression_statements": {
 			"patterns": [{
-				"match": "^\\s*(.+?);",
+				"match": "^\\s*(.+?)\\s*;",
 				"captures": {
 					"1": {"patterns": [{"include": "#expressions"}]}
 				}
@@ -498,21 +510,21 @@
 			]
 		},
 		"function_calls": {
-			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\(\\s*(.*)\\s*\\)",
+			"match": "([\\w&&[^0-9]]\\w*)\\s*\\(\\s*(.*)\\s*\\)",
 			"captures": {
 				"1": {"patterns": [{"include": "#function_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
 			}
 		},
 		"array_index": {
-			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\[\\s*(.*)\\s*\\]",
+			"match": "([\\w&&[^0-9]]\\w*)\\s*\\[\\s*(.*)\\s*\\]",
 			"captures": {
 				"1": {"patterns": [{"include": "#variable_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
 			}
 		},
 		"field_access": {
-			"match": "([\\w&&[^0-9]]+\\w*)\\s*\\.\\s*(.*)\\s*",
+			"match": "([\\w&&[^0-9]]\\w*)\\s*\\.\\s*(.*)\\s*",
 			"captures": {
 				"1": {"patterns": [{"include": "#variable_names"}]},
 				"2": {"patterns": [{"include": "#expressions"}]}
